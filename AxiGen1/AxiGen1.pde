@@ -465,8 +465,6 @@ void drawToDoList()
       x2 = toDoItem.x;
       y2 = toDoItem.y;
 
-      println(str(x2) + ", " + str(y2));
-
       if (x2 >= 0) {
         if (virtualPenDown)
         {
@@ -475,12 +473,9 @@ void drawToDoList()
           else
           offScreen.stroke(ToDoColor);
 
-
-
           offScreen.line(x1, y1, x2, y2); // Preview lines that are not yet on paper
 
-
-          println("Draw line: "+str(x1)+", "+str(y1)+", "+str(x2) + ", "+str(y2));
+          //println("Draw line: "+str(x1)+", "+str(y1)+", "+str(x2) + ", "+str(y2));
 
           x1 = x2;
           y1 = y2;
@@ -696,9 +691,7 @@ void GenerateArtwork(float xStart, float yStart, float radius, int steps)
   ToDoList = (PVector[]) append(ToDoList, new PVector(-30, 0)); //Command 30 (raise pen)
 
   // Command Code: Move to first (X,Y) point
-  ToDoList = (PVector[]) append(ToDoList, new PVector(-80, 0)); //Debug only
   ToDoList = (PVector[]) append(ToDoList, new PVector(xPos, yPos)); 
-  ToDoList = (PVector[]) append(ToDoList, new PVector(-81, 0)); //Debug only
 
   ToDoList = (PVector[]) append(ToDoList, new PVector(-31, 0)); //Command 31 (lower pen)
 

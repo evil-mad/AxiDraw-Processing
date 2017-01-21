@@ -10,8 +10,6 @@ int[] getMotorPixelPos() {
 }
 
 
-
-
 // Get float distance between two non-encoded (x,y) positions. 
 float getDistance(int x1, int y1, int x2, int y2)
 {
@@ -19,8 +17,6 @@ float getDistance(int x1, int y1, int x2, int y2)
   int ydiff = abs(y2 - y1);
   return sqrt(pow(xdiff, 2) + pow(ydiff, 2));
 }
-
-
 
 void scanSerial() 
 {  

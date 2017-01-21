@@ -1,5 +1,5 @@
 /**
- * RoboPaint RT - Draw loop check functions (not for drawing)
+ * Loop check functions (not for drawing)
  */
 
 
@@ -24,7 +24,6 @@ void checkServiceBrush() {
         indexDone++;
       }
 
-
       if (actionItem)
       {  // Perform next action from ToDoList::
 
@@ -39,17 +38,13 @@ void checkServiceBrush() {
           int y1 = round( (y2 - float(MousePaperTop)) * MotorStepsPerPixel); 
 
           MoveToXY(x1, y1);
-           println("Moving to: " + str(x2) + ", " + str(y2));
+          //println("Moving to: " + str(x2) + ", " + str(y2));
 
-          if (lastPosition.x == -1){
+          if (lastPosition.x == -1) {
             lastPosition = toDoItem; 
-            println("Starting point: Init.");
+            //println("Starting point: Init.");
           }
 
-          if (BrushDown == true) { 
-            //queueSegmentToDraw(lastPosition, toDoItem);  
-            //drawQueuedSegment();
-          }
           lastPosition = toDoItem;
 
           /*
@@ -69,12 +64,8 @@ void checkServiceBrush() {
            */
         } else
         {
-          //lastPosition = new PVector (-1,-1);  // For drawing 
-          println("inputTemp = " + str(inputTemp));
-
           intTemp = round(-1 * inputTemp);
 
-          println("intTemp = " + str(intTemp));
           if ((intTemp > 9) && (intTemp < 20)) 
           {  // Change paint color  
             intTemp -= 10;

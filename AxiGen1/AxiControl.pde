@@ -1,8 +1,6 @@
 /**
- * RoboPaint RT - watercolorbot control functions
+ * AxiDraw control functions
  */
-
-
 
 void raiseBrush() 
 {  
@@ -19,7 +17,6 @@ void raiseBrush()
         NextMoveTime = millis() + delayAfterRaisingBrush;
       }
       //      if (debugMode) println("Raise Brush.");
-      println("Raise Brush.");
     }
     raiseBrushStatus = -1; // Clear flag.
   }
@@ -45,7 +42,6 @@ void lowerBrush()
         //lastPosition = new PVector(-1,-1);
       }
       //      if (debugMode) println("Lower Brush.");
-       println("Lower Brush.");
     }
     lowerBrushStatus = -1; // Clear flag.
   }
@@ -115,12 +111,9 @@ void MoveToXY()
         int MaxTravel = max(abs(xD), abs(yD)); 
         traveltime_ms = int(floor( float(1000 * MaxTravel)/MotorSpeed));
 
-
         NextMoveTime = millis() + traveltime_ms -   ceil(1000 / frameRate);
         // Important correction-- Start next segment sooner than you might expect,
         // because of the relatively low framerate that the program runs at.
-
-
 
         if (SerialOnline) {
           if (reverseMotorX)
