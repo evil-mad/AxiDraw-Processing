@@ -1,11 +1,10 @@
-AxiDraw Realtime Example
-
+AxiDraw Generative Art Example
 
 Requirements to run application:
 * Sun Java Runtime 6, installed on your system
 
 Additional requirements to run from source code:
-* Processing 2.0.3 (Download from: http://processing.org/download/  )
+* Processing 3 (Download from: http://processing.org/download/  )
 * Ani library ( http://www.looksgood.de/libraries/Ani/ )
 
 
