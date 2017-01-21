@@ -250,8 +250,8 @@ void clearall()
 
   ToDoList = new PVector[0];
 
-  ToDoList = (PVector[]) append(ToDoList,new PVector(-30,0)); //Command 30 (Raise pen)
-  ToDoList = (PVector[]) append(ToDoList,new PVector(-35,0)); //Command 35 (Go home)
+  ToDoList = (PVector[]) append(ToDoList, new PVector(-30, 0)); //Command 30 (Raise pen)
+  ToDoList = (PVector[]) append(ToDoList, new PVector(-35, 0)); //Command 35 (Go home)
 
 
   indexDone = -1;    // Index in to-do list of last action performed
@@ -261,4 +261,16 @@ void clearall()
 
   Paused = false; 
   pause();
+}
+
+void quitApp()
+{  // ***** QUIT *****
+
+  if (SerialOnline)
+  { 
+    myPort.clear(); 
+    myPort.stop();
+  }
+
+  exit();
 }

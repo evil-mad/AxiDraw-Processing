@@ -13,9 +13,6 @@
 import de.looksgood.ani.*;
 import processing.serial.*;
 
-import javax.swing.UIManager; 
-import javax.swing.JFileChooser; 
-
 
 // User Settings: 
 float MotorSpeed = 4000.0;  // Steps per second, 1500 default
@@ -161,6 +158,7 @@ SimpleButton motorZeroButton;
 SimpleButton clearButton;
 SimpleButton replayButton;
 SimpleButton urlButton;
+SimpleButton quitButton;
 
 
 SimpleButton brushLabel;
@@ -169,7 +167,7 @@ SimpleButton UIMessage;
 
 void setup() 
 {
-  size(800, 631, FX2D);
+  size(800, 631, P2D);
   //pixelDensity(2);
 
 
@@ -251,6 +249,8 @@ void setup()
   xbutton = MousePaperLeft + 30;   
   ybutton =  30;
 
+  quitButton = new SimpleButton("Quit", xbutton, ybutton, font_CB, 20, LabelColor, TextHighLight); 
+
   xbutton = 655;
 
   urlButton = new SimpleButton("AxiDraw.com", xbutton, ybutton, font_CB, 20, LabelColor, TextHighLight);
@@ -310,7 +310,7 @@ void setup()
 
 void pause()
 {
-  println("Pause button");
+  //println("Pause button");
   pauseButton.displayColor = TextColor;
   if (Paused)
   {
@@ -469,9 +469,9 @@ void drawToDoList()
         if (virtualPenDown)
         {
           if (index < indexDone)
-          offScreen.stroke(DoneColor);
+            offScreen.stroke(DoneColor);
           else
-          offScreen.stroke(ToDoColor);
+            offScreen.stroke(ToDoColor);
 
           offScreen.line(x1, y1, x2, y2); // Preview lines that are not yet on paper
 
@@ -480,7 +480,7 @@ void drawToDoList()
           x1 = x2;
           y1 = y2;
         } else {
-          println("Pen up move");
+          //println("Pen up move");
           x1 = x2;
           y1 = y2;
         }
@@ -489,11 +489,11 @@ void drawToDoList()
         if (x3 == 30) 
         {
           virtualPenDown = false;
-          println("pen up");
+          //println("pen up");
         } else if (x3 == 31) 
         {  
           virtualPenDown = true;
-          println("pen down");
+          //println("pen down");
         } else if (x3 == 35) 
         {// Home;  MoveToXY(0, 0); Do not draw home moves.
           //if (virtualPenDown)
@@ -674,10 +674,9 @@ void mousePressed() {
     indexDrawn = -1;   // Index in to-do list of last to-do element drawn to screen
 
     drawToDoList();
-  }
+  } else if ( quitButton.isSelected() )  
+    quitApp();
 }
-
-
 
 
 
