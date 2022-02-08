@@ -559,10 +559,10 @@ void drawQueuedSegment()
 
 void draw() {
 
-  if (debugMode)
-  {
-    frame.setTitle("AxiRT      " + int(frameRate) + " fps");
-  }
+  //if (debugMode)
+  //{
+  //  frame.setTitle("AxiRT      " + int(frameRate) + " fps");
+  //}
 
   drawToDoList();
 

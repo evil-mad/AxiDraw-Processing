@@ -517,10 +517,10 @@ void drawToDoList()
 
 void draw() {
 
-  if (debugMode)
-  {
-    frame.setTitle("AxiGen      " + int(frameRate) + " fps");
-  }
+  //if (debugMode)
+  //{
+  //  frame.setTitle("AxiGen      " + int(frameRate) + " fps");
+  //}
 
   drawToDoList();
 
