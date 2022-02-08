@@ -12,12 +12,3 @@ Additional requirements to run from source code:
 For operation:
 Begin with carriage in UPPER LEFT (home) corner.
 If carriage does not begin in UPPER LEFT corner, press "motors off", manually move carriage to home corner, and press "motors zero" before proceeding.
-
-
-
-Known issues:
-Does not auto-detect serial port under windows (yeah, I'll get around to it...)
-
-No help file
-
-Some oddities in display of just-loaded file.
