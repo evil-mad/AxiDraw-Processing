@@ -10,6 +10,8 @@
  
  */
 
+import processing.javafx.*;
+
 import de.looksgood.ani.*;
 import processing.serial.*;
 
@@ -586,7 +588,7 @@ void draw() {
       myPort.write("SC,4," + str(ServoPaint) + "\r");  // Brush DOWN position, for painting
       myPort.write("SC,5," + str(ServoUp) + "\r");  // Brush UP position 
 
-      myPort.write("SC,10,65535\r"); // Set brush raising and lowering speed.
+      myPort.write("SC,10,1024\r"); // Set brush raising and lowering speed.
 
       // Ensure that we actually raise the brush:
       BrushDown = true;  

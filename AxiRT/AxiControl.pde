@@ -1,5 +1,5 @@
 /**
- * RoboPaint RT - watercolorbot control functions
+ * AxiDraw control functions
  */
 
 
@@ -15,6 +15,8 @@ void raiseBrush()
     if (BrushDown == true) {
       if (SerialOnline) {
         myPort.write("SP,0\r");           
+                println("Raise Brush SP CMD sent.");
+
         BrushDown = false;
         NextMoveTime = millis() + delayAfterRaisingBrush;
       }
@@ -56,6 +58,8 @@ void lowerBrush()
     {      
       if (SerialOnline) {
         myPort.write("SP,1\r");           // Lower Brush
+        println("Lower Brush SP CMD sent.");
+
         BrushDown = true;
         NextMoveTime = millis() + delayAfterLoweringBrush;
         lastPosition = -1;

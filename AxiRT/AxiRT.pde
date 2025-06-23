@@ -1,10 +1,12 @@
+import processing.javafx.*;
+
 /*
   AxiRT
  
  Real-time painting software for AxiDraw
  https://github.com/evil-mad/AxiDraw-Processing
  
- Based on RoboPaint RT: 
+ Based on RoboPaint RT:
  https://github.com/evil-mad/robopaint-rt
  
  */
@@ -12,15 +14,15 @@
 import de.looksgood.ani.*;
 import processing.serial.*;
 
-import javax.swing.UIManager; 
-import javax.swing.JFileChooser; 
+import javax.swing.UIManager;
+import javax.swing.JFileChooser;
 
 
-// User Settings: 
+// User Settings:
 float MotorSpeed = 2500.0;  // Steps per second, 1500 default
 
-int ServoUpPct = 70;    // Brush UP position, %  (higher number lifts higher). 
-int ServoPaintPct = 30;    // Brush DOWN position, %  (higher number lifts higher). 
+int ServoUpPct = 70;    // Brush UP position, %  (higher number lifts higher).
+int ServoPaintPct = 30;    // Brush DOWN position, %  (higher number lifts higher).
 
 boolean reverseMotorX = false;
 boolean reverseMotorY = false;
@@ -43,15 +45,15 @@ PImage imgMain;         // Primary drawing canvas
 PImage imgLocator;      // Cursor crosshairs
 PImage imgButtons;      // Text buttons
 PImage imgHighlight;
-String BackgroundImageName = "background.png"; 
-String HelpImageName = "help.png"; 
+String BackgroundImageName = "background.png";
+String HelpImageName = "help.png";
 
 boolean segmentQueued = false;
 int queuePt1 = -1;
 int queuePt2 = -1;
 
 float MotorStepsPerPixel = 16.05;// Good for 1/8 steps-- standard behavior.
-float PixelsPerInch = 63.3; 
+float PixelsPerInch = 63.3;
 
 // Hardware resolution: 1016 steps per inch @ 50% max resolution
 // Horizontal extent in this window frame is 740 px.
@@ -71,7 +73,7 @@ int yBrushRestPositionPixels = 6;
 
 
 int ServoUp;    // Brush UP position, native units
-int ServoPaint;    // Brush DOWN position, native units. 
+int ServoPaint;    // Brush DOWN position, native units.
 
 int MotorMinX;
 int MotorMinY;
@@ -97,13 +99,13 @@ int yLocAtPause;
 int MotorX;  // Position of X motor
 int MotorY;  // Position of Y motor
 int MotorLocatorX;  // Position of motor locator
-int MotorLocatorY; 
+int MotorLocatorY;
 int lastPosition; // Record last encoded position for drawing
 
 int selectedColor;
 int selectedWater;
 int highlightedWater;
-int highlightedColor; 
+int highlightedColor;
 
 
 boolean recordingGesture;
@@ -129,8 +131,8 @@ int raiseBrushStatus;
 int lowerBrushStatus;
 int moveStatus;
 int MoveDestX;
-int MoveDestY; 
-int PaintDest; 
+int MoveDestY;
+int PaintDest;
 
 boolean Paused;
 
@@ -168,7 +170,7 @@ SimpleButton brushLabel;
 SimpleButton motorLabel;
 SimpleButton UIMessage;
 
-void setup() 
+void setup()
 {
   size(800, 631, FX2D);
   //pixelDensity(2);
@@ -209,15 +211,15 @@ void setup()
 
 
   ServoUp = 7500 + 175 * ServoUpPct;    // Brush UP position, native units
-  ServoPaint = 7500 + 175 * ServoPaintPct;   // Brush DOWN position, native units. 
+  ServoPaint = 7500 + 175 * ServoPaintPct;   // Brush DOWN position, native units.
 
 
 
 
   // Button setup
 
-  font_ML16  = loadFont("Miso-Light-16.vlw"); 
-  font_CB = loadFont("Miso-20.vlw"); 
+  font_ML16  = loadFont("Miso-Light-16.vlw");
+  font_CB = loadFont("Miso-20.vlw");
 
 
 
@@ -225,7 +227,7 @@ void setup()
   int ybutton = MousePaperBottom + 20;
 
   pauseButton = new SimpleButton("Pause", xbutton, MousePaperBottom + 20, font_CB, 20, TextColor, TextHighLight);
-  xbutton += 60; 
+  xbutton += 60;
 
   brushLabel = new SimpleButton("Pen:", xbutton, ybutton, font_CB, 20, LabelColor, LabelColor);
   xbutton += 45;
@@ -247,10 +249,10 @@ void setup()
   xbutton += 80;
   replayButton = new SimpleButton("Replay All", xbutton, MousePaperBottom + 20, font_CB, 20, TextColor, TextHighLight);
 
-  xbutton = MousePaperLeft + 30;   
+  xbutton = MousePaperLeft + 30;
   ybutton =  30;
 
-  openButton = new SimpleButton("Open File", xbutton, ybutton, font_CB, 20, LabelColor, TextHighLight); 
+  openButton = new SimpleButton("Open File", xbutton, ybutton, font_CB, 20, LabelColor, TextHighLight);
   xbutton += 80;
   saveButton = new SimpleButton("Save File", xbutton, ybutton, font_CB, 20, LabelColor, TextHighLight);
 
@@ -258,20 +260,20 @@ void setup()
 
   urlButton = new SimpleButton("AxiDraw.com", xbutton, ybutton, font_CB, 20, LabelColor, TextHighLight);
 
-  UIMessage = new SimpleButton("Welcome to AxiRT! Hold 'h' key for help!", 
+  UIMessage = new SimpleButton("Welcome to AxiRT! Hold 'h' key for help!",
     MousePaperLeft, MousePaperTop - 5, font_CB, 20, LabelColor, LabelColor);
 
 
 
 
   UIMessage.label = "Searching For ... ";
-  UIMessageExpire = millis() + 25000; 
+  UIMessageExpire = millis() + 25000;
 
   rectMode(CORNERS);
 
 
   MotorX = 0;
-  MotorY = 0; 
+  MotorY = 0;
 
   ToDoList = new int[0];
   ToDoList = append(ToDoList, -35);  // Command code: Go home (0,0)
@@ -280,7 +282,7 @@ void setup()
   indexDrawn = -1;   // Index in to-do list of last to-do element drawn to screen
 
   raiseBrushStatus = -1;
-  lowerBrushStatus = -1; 
+  lowerBrushStatus = -1;
   moveStatus = -1;
   MoveDestX = -1;
   MoveDestY = -1;
@@ -297,7 +299,7 @@ void setup()
   MotorLocatorY = pos[1];
 
   NextMoveTime = millis();
-  imgBackground = loadImage(BackgroundImageName);  // Load the image into the program  
+  imgBackground = loadImage(BackgroundImageName);  // Load the image into the program
 
   drawToDoList();
   redrawButtons();
@@ -319,17 +321,17 @@ void pause()
     {
       int waitTime = NextMoveTime - millis();
       if (waitTime > 0)
-      { 
+      {
         delay (waitTime);  // Wait for prior move to finish:
       }
 
-      if (BrushDown) { 
+      if (BrushDown) {
         raiseBrush();
       }
 
       waitTime = NextMoveTime - millis();
       if (waitTime > 0)
-      { 
+      {
         delay (waitTime);  // Wait for prior move to finish:
       }
 
@@ -337,7 +339,7 @@ void pause()
 
       waitTime = NextMoveTime - millis();
       if (waitTime > 0)
-      { 
+      {
         delay (waitTime);  // Wait for prior move to finish:
       }
 
@@ -351,7 +353,7 @@ void pause()
 
 
     if (BrushDown) {
-      BrushDownAtPause = true; 
+      BrushDownAtPause = true;
       raiseBrush();
     } else
       BrushDownAtPause = false;
@@ -398,7 +400,7 @@ boolean serviceBrush()
 
 
 void drawToDoList()
-{  
+{
   // Erase all painting on main image background, and draw the existing "ToDo" list
   // on the off-screen buffer.
 
@@ -436,7 +438,7 @@ void drawToDoList()
       offScreen.image(imgMain, 0, 0);
 
 
-    offScreen.strokeWeight(1); 
+    offScreen.strokeWeight(1);
 
     offScreen.stroke(PenColor);
 
@@ -445,7 +447,7 @@ void drawToDoList()
 
     while ( (indexDrawn + 1) < j) {
 
-      indexDrawn++;  
+      indexDrawn++;
       // NOTE:  We increment the "Drawn" count here at the beginning of the loop,
       //        momentarily indicating (somewhat inaccurately) that the so-numbered
       //        list element has been drawn-- really, we're in the process of drawing it,
@@ -458,7 +460,7 @@ void drawToDoList()
       {  // Preview a path segment
 
         x2 = floor(intTemp / 10000);
-        y2 = intTemp - 10000 * x2; 
+        y2 = intTemp - 10000 * x2;
 
         if (DrawingPath)
           if ((x1 + y1) == 0)    // first time through the loop
@@ -482,7 +484,7 @@ void drawToDoList()
         interA = lerpColor(PenColor, white, brightness);  //To-do items in queue
 
         offScreen.stroke(interA);
-        offScreen.line(x1, y1, x2, y2); 
+        offScreen.line(x1, y1, x2, y2);
 
         x1 = x2;
         y1 = y2;
@@ -491,13 +493,13 @@ void drawToDoList()
         intTemp = -1 * intTemp;
         DrawingPath = false;
 
-        if ((intTemp > 9) && (intTemp < 20)) 
-        {  // Change paint color 
+        if ((intTemp > 9) && (intTemp < 20))
+        {  // Change paint color
           intTemp -= 10;
-        } else if (intTemp == 30) 
-        {  
+        } else if (intTemp == 30)
+        {
           lastBrushDown_DrawingPath = false;
-        } else if (intTemp == 31) 
+        } else if (intTemp == 31)
         {  // Lower brush
           lastBrushDown_DrawingPath = true;
         }
@@ -521,7 +523,7 @@ void queueSegmentToDraw(int prevPoint, int newPoint)
 void drawQueuedSegment()
 {    // Draw new "done" segment, on the off-screen buffer.
 
-  int x1, x2, y1, y2;  
+  int x1, x2, y1, y2;
   color interA;
   float brightness;
 
@@ -531,7 +533,7 @@ void drawQueuedSegment()
 
     offScreen.beginDraw();     // Ready the offscreen buffer for drawing
     offScreen.image(imgMain, 0, 0);
-    offScreen.strokeWeight(1); 
+    offScreen.strokeWeight(1);
 
     interA = PenColor;
 
@@ -545,9 +547,9 @@ void drawQueuedSegment()
     y1 = queuePt1 - 10000 * x1;
 
     x2 = floor(queuePt2 / 10000);
-    y2 = queuePt2 - 10000 * x2;  
+    y2 = queuePt2 - 10000 * x2;
 
-    offScreen.line(x1, y1, x2, y2); 
+    offScreen.line(x1, y1, x2, y2);
 
     offScreen.endDraw();
 
@@ -559,17 +561,17 @@ void drawQueuedSegment()
 
 void draw() {
 
-  //if (debugMode)
-  //{
-  //  frame.setTitle("AxiRT      " + int(frameRate) + " fps");
-  //}
+  if (debugMode)
+  {
+    //frame.setTitle("AxiRT      " + int(frameRate) + " fps");
+  }
 
   drawToDoList();
 
   // NON-DRAWING LOOP CHECKS ==========================================
 
   if (doSerialConnect == false)
-    checkServiceBrush(); 
+    checkServiceBrush();
 
 
   checkHighlights();
@@ -580,7 +582,7 @@ void draw() {
       UIMessage.displayColor = lerpColor(UIMessage.displayColor, color(242), .5);
       UIMessage.highlightColor = UIMessage.displayColor;
 
-      if (millis() > (UIMessageExpire + 500)) { 
+      if (millis() > (UIMessageExpire + 500)) {
         UIMessage.label = "";
         UIMessage.displayColor = LabelColor;
       }
@@ -594,8 +596,8 @@ void draw() {
   {  // Help display
     image(loadImage(HelpImageName), 0, 0, 800, 631);
 
-    
-    
+
+
     println("HELP requested");
   } else
   {
@@ -615,34 +617,33 @@ void draw() {
 
   if (doSerialConnect)
   {
-    // FIRST RUN ONLY:  Connect here, so that 
+    // FIRST RUN ONLY:  Connect here, so that
 
     doSerialConnect = false;
 
     scanSerial();
 
     if (SerialOnline)
-    {    
+    {
       myPort.write("EM,2\r");  //Configure both steppers to 1/8 step mode
 
       // Configure brush lift servo endpoints and speed
       myPort.write("SC,4," + str(ServoPaint) + "\r");  // Brush DOWN position, for painting
-      myPort.write("SC,5," + str(ServoUp) + "\r");  // Brush UP position 
+      myPort.write("SC,5," + str(ServoUp) + "\r");  // Brush UP position
 
-      //    myPort.write("SC,10,255\r"); // Set brush raising and lowering speed.
-      myPort.write("SC,10,65535\r"); // Set brush raising and lowering speed.
+      myPort.write("SC,10,1024\r"); // Set brush raising and lowering speed.
 
 
       // Ensure that we actually raise the brush:
-      BrushDown = true;  
-      raiseBrush();    
+      BrushDown = true;
+      raiseBrush();
 
       UIMessage.label = "Welcome to AxiRT!  Hold 'h' key for help!";
       UIMessageExpire = millis() + 5000;
       println("Now entering interactive painting mode.\n");
       redrawButtons();
     } else
-    { 
+    {
       println("Now entering offline simulation mode.\n");
 
       UIMessage.label = "AxiDraw not found.  Entering Simulation Mode. ";
@@ -685,10 +686,10 @@ void redrawLocator() {
   offScreen.beginDraw();
   offScreen.background(0, 0);
 
-  offScreen.stroke(0, 0, 0, 128); 
-  offScreen.strokeWeight(2);  
+  offScreen.stroke(0, 0, 0, 128);
+  offScreen.strokeWeight(2);
   int x0 = 10;
-  int y0 = 10; 
+  int y0 = 10;
 
   if (BrushDown)
     offScreen.fill(PenColor);
@@ -716,7 +717,7 @@ void mousePressed() {
     recordingGesture = true;
 
     //  ***TODO
-    // If just beginning and no color has yet selected, get water before beginning. 
+    // If just beginning and no color has yet selected, get water before beginning.
 
     ToDoList = append(ToDoList, -30);   // Command Code:  -30 (raise brush)  (Only has an effect if the brush is already down.)
 
@@ -731,28 +732,32 @@ void mousePressed() {
   }
 
 
-  if ( pauseButton.isSelected() )  
-    pause(); 
-  else if ( brushUpButton.isSelected() )  
+  if ( pauseButton.isSelected() )
+    pause();
+  else if ( brushUpButton.isSelected() )
   {
 
-    if (Paused)
+    if (Paused) {
       raiseBrush();
-    else
+    } else {
       ToDoList = append(ToDoList, -30);   // Command Code:  -30 (raise brush)
+    }
   } else if ( brushDownButton.isSelected() ) {
 
     if (Paused)
+    {
       lowerBrush();
-    else
+    } else
+    {
       ToDoList = append(ToDoList, -31);   // Command Code:  -31 (lower brush)
+    }
   } else if (urlButton.isSelected()) {
     link("http://axidraw.com");
-  } else if ( parkButton.isSelected() )  
+  } else if ( parkButton.isSelected() )
   {
 
     if (Paused)
-    { 
+    {
       raiseBrush();
       MoveToXY(0, 0);
     } else
@@ -760,11 +765,11 @@ void mousePressed() {
       ToDoList = append(ToDoList, -30);   // Command Code:  -30 (raise brush)
       ToDoList = append(ToDoList, -35);  // Command code: Go home (0,0)
     }
-  } else if ( motorOffButton.isSelected() )  
-    MotorsOff();    
-  else if ( motorZeroButton.isSelected() )  
-    zero();      
-  else if ( clearButton.isSelected() )  
+  } else if ( motorOffButton.isSelected() )
+    MotorsOff();
+  else if ( motorZeroButton.isSelected() )
+    zero();
+  else if ( clearButton.isSelected() )
   {  // ***** CLEAR ALL *****
 
     ToDoList = new int[0];
@@ -777,9 +782,9 @@ void mousePressed() {
 
     drawToDoList();
 
-    Paused = true; 
+    Paused = true;
     pause();
-  } else if ( replayButton.isSelected() )  
+  } else if ( replayButton.isSelected() )
   {
     // Clear indexDone to "zero" (actually, -1, since even element 0 is not "done.")   & redraw to-do list.
 
@@ -787,11 +792,11 @@ void mousePressed() {
     indexDrawn = -1;   // Index in to-do list of last to-do element drawn to screen
 
     drawToDoList();
-  } else if ( saveButton.isSelected() )  
+  } else if ( saveButton.isSelected() )
   {
     // Save file with dialog #####
     selectOutput("Output .rrt file name:", "SavefileSelected");
-  } else if ( openButton.isSelected() )  
+  } else if ( openButton.isSelected() )
   {
     // Open file with dialog #####
     selectInput("Select an AxiRT (.rrt) file to open:", "fileSelected");  // Opens file chooser
@@ -809,9 +814,9 @@ void SavefileSelected(File selection) {    // SAVE FILE
 
     UIMessage.label = "File not saved (reason: no file name chosen).";
     UIMessageExpire = millis() + 3000;
-  } else { 
+  } else {
 
-    String[] FileOutput; 
+    String[] FileOutput;
     //        String rowTemp;
 
     String savePath = selection.getAbsolutePath();
@@ -823,18 +828,18 @@ void SavefileSelected(File selection) {    // SAVE FILE
     if ( p[p.length - 1].equals("RRT"))
       fileOK = true;
     if ( p[p.length - 1].equals("rrt"))
-      fileOK = true;      
+      fileOK = true;
     if (fileOK == false)
       savePath = savePath + ".rrt";
 
-    // If a file was selected, print path to folder 
-    println("Save file: " + savePath); 
+    // If a file was selected, print path to folder
+    println("Save file: " + savePath);
 
-    int listLength = ToDoList.length; 
+    int listLength = ToDoList.length;
     for ( int i = 0; i < listLength; ++i) {
 
       FileOutput = append(FileOutput, str(ToDoList[i]));
-    } 
+    }
 
     saveStrings(savePath, FileOutput);
 
@@ -859,8 +864,8 @@ void fileSelected(File selection) {    // LOAD (OPEN) FILE
 
     String loadPath = selection.getAbsolutePath();
 
-    // If a file was selected, print path to file 
-    println("Loaded file: " + loadPath); 
+    // If a file was selected, print path to file
+    println("Loaded file: " + loadPath);
 
     String[] p = splitTokens(loadPath, ".");
     boolean fileOK = false;
@@ -869,9 +874,9 @@ void fileSelected(File selection) {    // LOAD (OPEN) FILE
     if ( p[p.length - 1].equals("RRT"))
       fileOK = true;
     if ( p[p.length - 1].equals("rrt"))
-      fileOK = true;      
+      fileOK = true;
 
-    println("File OK: " + fileOK); 
+    println("File OK: " + fileOK);
 
     if (fileOK) {
 
@@ -884,14 +889,14 @@ void fileSelected(File selection) {    // LOAD (OPEN) FILE
 
       // Clear indexDone to "zero" (actually, -1, since even element 0 is not "done.")   & redraw to-do list.
 
-      ToDoList = new int[0];   
+      ToDoList = new int[0];
       indexDone = -1;    // Index in to-do list of last action performed
       indexDrawn = -1;   // Index in to-do list of last to-do element drawn to screen
 
       drawToDoList();
 
       println("there are " + lines.length + " lines");
-      for (int i = 0; i < lines.length; i++) { 
+      for (int i = 0; i < lines.length; i++) {
         todoNew = parseInt(lines[i]);
         //        println(str(todoNew));
         ToDoList = append(ToDoList, todoNew);
@@ -904,7 +909,7 @@ void fileSelected(File selection) {    // LOAD (OPEN) FILE
 }
 
 
-void mouseDragged() { 
+void mouseDragged() {
 
   int i;
   int posOld, posNew;
@@ -913,10 +918,10 @@ void mouseDragged() {
   float distTemp = 0;
 
   if (recordingGesture)
-  { 
+  {
     posNew = xyEncodeInt2();
 
-    i = ToDoList.length; 
+    i = ToDoList.length;
 
     if (i > 1)
     {
@@ -926,16 +931,16 @@ void mouseDragged() {
 
         addpoint = true;
         distTemp = getDistance(posOld, posNew) ;
-        // Only add points that are some minimum distance away from each other 
-        if (distTemp < minDist) {  
+        // Only add points that are some minimum distance away from each other
+        if (distTemp < minDist) {
           addpoint = false;
-        }  
+        }
 
         if (addpoint)
           ToDoList = append(ToDoList, posNew);  // Command code: XY coordinate pair
       }
     } else
-    { // List length may be zero. 
+    { // List length may be zero.
       ToDoList = append(ToDoList, posNew);  // Command code: XY coordinate pair
     }
   }
@@ -944,8 +949,8 @@ void mouseDragged() {
 
 void mouseReleased() {
   if (recordingGesture)
-  {   
-    recordingGesture = false; 
+  {
+    recordingGesture = false;
     ToDoList = append(ToDoList, -30);   // Command Code:  -30 (raise brush)
   }
 }
@@ -956,12 +961,12 @@ void keyReleased()
 
   if (key == CODED) {
 
-    if (keyCode == UP) keyup = false; 
-    if (keyCode == DOWN) keydown = false; 
-    if (keyCode == LEFT) keyleft = false; 
-    if (keyCode == RIGHT) keyright = false; 
+    if (keyCode == UP) keyup = false;
+    if (keyCode == DOWN) keydown = false;
+    if (keyCode == LEFT) keyleft = false;
+    if (keyCode == RIGHT) keyright = false;
 
-    if (keyCode == SHIFT) { 
+    if (keyCode == SHIFT) {
 
       shiftKeyDown = false;
     }
@@ -989,21 +994,21 @@ void keyPressed()
 
     // Arrow keys are used for nudging, with or without shift key.
 
-    if (keyCode == UP) 
+    if (keyCode == UP)
     {
       keyup = true;
     }
     if (keyCode == DOWN)
-    { 
+    {
       keydown = true;
     }
-    if (keyCode == LEFT) keyleft = true; 
-    if (keyCode == RIGHT) keyright = true; 
+    if (keyCode == LEFT) keyleft = true;
+    if (keyCode == RIGHT) keyright = true;
     if (keyCode == SHIFT) shiftKeyDown = true;
   } else
   {
     key = Character.toLowerCase(key);
-    println("Key pressed" + key); 
+    println("Key pressed" + key);
 
     if ( key == 'b')   // Toggle brush up or brush down with 'b' key
     {
@@ -1012,7 +1017,6 @@ void keyPressed()
       else
         lowerBrush();
     }
-
     if ( key == 'z')  // Zero motor coordinates
       zero();
 
@@ -1029,27 +1033,27 @@ void keyPressed()
     {
       hKeyDown = true;
       println("HELP requested");
-    } 
+    }
 
-    if ( key == 't')  // Disable motors, to manually move carriage.  
+    if ( key == 't')  // Disable motors, to manually move carriage.
       MotorsOff();
 
     if ( key == '1')
-      MotorSpeed = 500;  
+      MotorSpeed = 500;
     if ( key == '2')
-      MotorSpeed = 1000;        
+      MotorSpeed = 1000;
     if ( key == '3')
-      MotorSpeed = 1500;        
+      MotorSpeed = 1500;
     if ( key == '4')
-      MotorSpeed = 2000;        
+      MotorSpeed = 2000;
     if ( key == '5')
-      MotorSpeed = 2500;        
+      MotorSpeed = 2500;
     if ( key == '6')
-      MotorSpeed = 2900;        
+      MotorSpeed = 2900;
     if ( key == '7')
-      MotorSpeed = 3200;        
+      MotorSpeed = 3200;
     if ( key == '8')
-      MotorSpeed = 3500;        
+      MotorSpeed = 3500;
     if ( key == '9')
       MotorSpeed = 4000;
   }
